@@ -27,7 +27,7 @@
     ".env*": true,
     ".github/": true,
     ".vscode/": false,
-    "*.md": true,
+    "*.md": false,
     "data": true,
     "poetry.toml": false,
     ".cov.xml": true,
