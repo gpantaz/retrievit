@@ -429,7 +429,7 @@ class TrainArgs(transformers.TrainingArguments):
     report_to: Literal["all", "none"] = field(default="none")
 
     # Workaround to push_to_hub arg from Trainer
-    upload_embeddings_during_training_after_training: bool = field(default=True)
+    upload_embeddings_after_training: bool = field(default=True)
     upload_embeddings_during_training: bool = field(default=True)
     upload_full_model_after_training: bool = field(default=True)
     hf_repo_id: str = field(default="gpantaz/retrievit")
@@ -591,7 +591,7 @@ def train() -> None:
 
     trainer.train()
 
-    if train_args.upload_after_training:
+    if train_args.upload_embeddings_after_training:
         output_dir = train_args.output_dir
 
         Path(output_dir).mkdir(exist_ok=True)
@@ -634,7 +634,21 @@ def train() -> None:
             )
 
         elif train_args.do_test_duplicate:
-            test_n_gram_duplicate()
+            test_n_gram_duplicate(
+                model=model,
+                tokenizer=tokenizer,
+                collate_fn=collate_fn,
+                logger_callback=custom_wandb_callback,
+                seq_len=data_args.ngram_retrieval_test_seq_len,
+                duplicate_n_gram_bins=data_args.duplicate_n_gram_bins,
+                vocab_size=data_args.vocab_size,
+                retrieval_n_gram_size=data_args.retrieval_n_gram_size,
+                retrieval_query_n_gram_size=data_args.retrieval_query_n_gram_size,
+                is_prefix=data_args.is_prefix,
+                needs_attention_mask=model_args.model_class != "mamba",
+                batch_size=train_args.per_device_eval_batch_size,
+                num_workers=train_args.dataloader_num_workers,
+            )
 
 
 def test_n_gram_extrapolation(
