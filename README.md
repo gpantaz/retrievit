@@ -54,4 +54,16 @@ Additional useful arguments that can be set in `train.py` and included in the sc
 --hf_repo_id username/repo_id 
 ```
 
-![til](./plots/hybrid_1Mamba21T_state16.json-lr5e-5-seqlen200-prefixFalse-seed12345/pca_2D.gif)
+## Visualize Embeddings
+
+
+### PCA 2D
+|           Transformer (RoPE)           |              Mamba2               |        Hybrid 1 Mamba2/1 Transformer        |
+| :------------------------------------: | :-------------------------------: | :-----------------------------------------: |
+| ![til](./plots/transformer/pca_2D.gif) | ![til](./plots/mamba2/pca_2D.gif) | ![til](./plots/hybrid_1Mamba21T_state16/pca_2D.gif) |
+
+
+### Cosine similarities
+|           Transformer (RoPE)           |              Mamba2               |            Hybrid 1 Mamba2/1 Transformer            |
+| :------------------------------------: | :-------------------------------: | :-------------------------------------------------: |
+| ![til](./plots/transformer/cosine_sim_dim=16.gif) | ![til](./plots/mamba2/cosine_sim_dim=16.gif) | ![til](./plots/hybrid_1Mamba21T_state16/cosine_sim_dim=16.gif) |
