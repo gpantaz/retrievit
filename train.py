@@ -429,9 +429,9 @@ class TrainArgs(transformers.TrainingArguments):
     report_to: Literal["all", "none"] = field(default="none")
 
     # Workaround to push_to_hub arg from Trainer
-    upload_embeddings_after_training: bool = field(default=True)
-    upload_embeddings_during_training: bool = field(default=True)
-    upload_full_model_after_training: bool = field(default=True)
+    upload_embeddings_after_training: bool = field(default=False)
+    upload_embeddings_during_training: bool = field(default=False)
+    upload_full_model_after_training: bool = field(default=False)
     hf_repo_id: str = field(default="gpantaz/retrievit")
 
     do_test_extrapolation: bool = field(default=False)
