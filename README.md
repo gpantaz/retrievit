@@ -55,15 +55,26 @@ Additional useful arguments that can be set in `train.py` and included in the sc
 ```
 
 ## Visualize Embeddings
+Assuming you trained a model and you saved the embeddings to a remote HF repo. You can visualize
+the learned embeddings for the position retrieval task:
+
+```
+python visualize_embeddings.py \
+	--hf-repo-id /remote/hf/repo/id \
+	--hf-remote-folder /path/to/remote/hf/folder/in/repo \
+	--plots-directory /path/to/output/plots/directory \
+```
 
 
-### PCA 2D
+### Examples
+
+#### PCA 2D
 |           Transformer (RoPE)           |              Mamba2               |        Hybrid 1 Mamba2/1 Transformer        |
 | :------------------------------------: | :-------------------------------: | :-----------------------------------------: |
 | ![til](./plots/transformer/pca_2D.gif) | ![til](./plots/mamba2/pca_2D.gif) | ![til](./plots/hybrid_1Mamba21T_state16/pca_2D.gif) |
 
 
-### Cosine similarities
+#### Cosine similarities
 |           Transformer (RoPE)           |              Mamba2               |            Hybrid 1 Mamba2/1 Transformer            |
 | :------------------------------------: | :-------------------------------: | :-------------------------------------------------: |
 | ![til](./plots/transformer/cosine_sim_dim=16.gif) | ![til](./plots/mamba2/cosine_sim_dim=16.gif) | ![til](./plots/hybrid_1Mamba21T_state16/cosine_sim_dim=16.gif) |
