@@ -63,17 +63,17 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--hf-remote-folder",
-        type=str,
-        required=True,
-        help="Path to the Hugging Face remote folder within the HF repo",
-    )
-
-    parser.add_argument(
         "--hf-repo-id",
         type=str,
         required=True,
         help="Hugging Face repository ID",
+    )
+
+    parser.add_argument(
+        "--hf-remote-folder",
+        type=str,
+        required=True,
+        help="Path to the Hugging Face remote folder within the HF repo",
     )
 
     parser.add_argument(
