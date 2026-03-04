@@ -1,5 +1,5 @@
 # Retrievit: In-context Retrieval Capabilities of Transformers, State Space Models, and Hybrid Architectures
-[[Paper](https://arxiv.org/pdf/2409.05395)][[Model Configs](#models)][[Training](#training)]
+[[Paper](https://arxiv.org/abs/2603.02874)][[Model Configs](#models)][[Training](#training)]
 
 ## Installation
 
