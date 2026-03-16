@@ -339,7 +339,6 @@ class MixerModel(nn.Module):
                 use_cache=False,
             )
 
-            # TODO: Note sure if this is needed
             hidden_states = hidden_states + residual
 
         # for layer in self.layers:
