@@ -6,6 +6,7 @@
 ```
 conda create -p retrievit python=3.13
 
+conda activate retrievit
 # Install dependencies
 poetry install
 
