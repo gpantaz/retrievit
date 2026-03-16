@@ -28,7 +28,7 @@ All training scripts required to reproduce the results of the paper are under `s
 
 An example of training a Transformer (RoPE) model on the ngram task:
 ```
-./scripts/train_transformer_ngram.sh configs/model/transformer.json 1e-5 128 64 1 False 12345
+./scripts/train_transformer_ngram.sh configs/model/transformer.json 1e-5 64 128 1 False 12345
 ```
 
 The positional arguments are:
