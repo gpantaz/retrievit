@@ -261,13 +261,6 @@ class MixerModel(nn.Module):
                 )
                 hidden_states = layer_outputs
 
-                # TODO: Check if this is true
-                # I believe that the residual has already been applied in the transformer layer
-                # So, if the transformer is final block of the model, we don't need to apply the
-                # residual
-                # If the mamba is the final block, we need to apply the residual which is done
-                # internally in the mamba layer
-                # residual = None
             else:
                 hidden_states, residual = layer(
                     hidden_states,
