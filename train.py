@@ -22,7 +22,6 @@ from retrievit.callbacks.callbacks import (
 from retrievit.datamodels.datamodels import DatasetItem, DatasetPadding, SpecialTokens, Task
 from retrievit.datasets.collate import Collate
 from retrievit.models.hybrid_par import HybridPar
-from retrievit.models.hybrid_par_corrector import HybridParCorrector
 from retrievit.models.hybrid_seq import HybridSeq
 from retrievit.models.mamba import Mamba
 from retrievit.models.transformer import Transformer
@@ -33,7 +32,7 @@ from retrievit.utils.count_model_parameters import compute_trainable_params
 from retrievit.utils.huggingface import upload_file_to_hub
 from retrievit.utils.io import read_json
 
-ModelType = Transformer | Mamba | HybridSeq | HybridPar | TransformerNoPE | HybridParCorrector
+ModelType = Transformer | Mamba | HybridSeq | HybridPar | TransformerNoPE
 
 
 def random_int(min_value: int, max_value: int) -> int:
