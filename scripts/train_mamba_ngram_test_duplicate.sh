@@ -39,5 +39,4 @@ python train.py \
 	--upload_full_model_after_training False \
 	--early_stopping_threshold 0.99 \
 	--do_test_duplicate True \
-	--max_train_steps 10000000 \
 	--run-name ${config}-lr${learning_rate}-ngram5-query2-seqlen100-minseqlen50-prefix${is_prefix}-seed${seed}
