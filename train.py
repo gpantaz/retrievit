@@ -58,7 +58,6 @@ class RetrievetSamplingDataset(Dataset[DatasetItem]):
         is_eval: bool = False,
         duplicate_n_gram_bins: int = 4,
         duplicate_n_grams: bool = False,
-        position_retrieval_varlen: bool = False,
     ) -> None:
         """Initialize the dataset."""
         self.task = task
@@ -74,10 +73,8 @@ class RetrievetSamplingDataset(Dataset[DatasetItem]):
         self.prepare_instance = {
             Task.n_gram_retrieval.value: self.prepare_n_gram_retrieval_instance
             if not duplicate_n_grams
-            else self.prepare_corrupted_n_gram_retrieval_instance,
-            Task.position_retrieval.value: self.prepare_position_retrieval_instance_varlen
-            if position_retrieval_varlen
-            else self.prepare_position_retrieval_instance,
+            else self.prepare_duplicate_n_gram_retrieval_instance,
+            Task.position_retrieval.value: self.prepare_position_retrieval_instance,
         }
 
         self.special_tokens = SpecialTokens()
@@ -95,56 +92,6 @@ class RetrievetSamplingDataset(Dataset[DatasetItem]):
     def __getitem__(self, idx: int) -> DatasetItem:
         """Get the item at the index."""
         return self.prepare_instance[self.task]()
-
-    def prepare_position_retrieval_instance_varlen(self) -> DatasetItem:
-        """Prepare an instance of the position retrieval task."""
-        seq_len = self.seq_len - 1
-        if self.min_seq_len is not None:
-            seq_len = random_int(self.min_seq_len, self.seq_len - 1)
-
-        full_sequence = [
-            self.special_tokens.special_token_format.format(index=token_id)
-            for token_id in range(self.vocab_size)
-        ]
-        target_token_idx = random.randint(0, len(full_sequence) - 1)  # noqa: S311
-        query_token = full_sequence[target_token_idx]
-        seq_without_target = (
-            full_sequence[:target_token_idx] + full_sequence[target_token_idx + 1 :]
-        )
-
-        sequence = random.choices(seq_without_target, k=seq_len)  # noqa: S311
-        sequence.append(query_token)
-        random.shuffle(sequence)
-        target_pos = sequence.index(query_token)
-
-        if self._is_prefix:
-            input_sequence = [
-                self.special_tokens.query_token,
-                query_token,
-                self.special_tokens.bos_token,
-                *sequence,
-            ]
-        else:
-            input_sequence = [
-                self.special_tokens.bos_token,
-                *sequence,
-                self.special_tokens.query_token,
-                query_token,
-            ]
-
-        target_position_token = self.special_tokens.position_token_format.format(index=target_pos)
-        target_sequence = [target_position_token, self.special_tokens.bos_token]
-
-        input_ids, attention_mask, labels = self.prepare_inputs_targets(
-            inputs=input_sequence, targets=target_sequence
-        )
-
-        return DatasetItem(
-            input_ids=input_ids,
-            labels=labels,
-            task=self._get_task_as_tensor(Task.position_retrieval),
-            attention_mask=attention_mask,
-        )
 
     def prepare_position_retrieval_instance(self) -> DatasetItem:
         """Prepare an instance of the position retrieval task."""
@@ -262,8 +209,8 @@ class RetrievetSamplingDataset(Dataset[DatasetItem]):
 
         return (input_ids, attention_mask, labels)
 
-    def prepare_corrupted_n_gram_retrieval_instance(self) -> DatasetItem:
-        """Prepare a corrupted n-gram retrieval instance."""
+    def prepare_duplicate_n_gram_retrieval_instance(self) -> DatasetItem:
+        """Prepare a duplicate n-gram retrieval instance."""
         full_sequence = [
             self.special_tokens.special_token_format.format(index=token_id)
             for token_id in range(self.vocab_size)
@@ -366,7 +313,7 @@ class ModelArguments:
 class DataArguments:
     """Data arguments."""
 
-    task: str = field(default=Task.copy.value)
+    task: str = field(default=Task.n_gram_retrieval.value)
 
     seq_len: int = field(default=50)
     min_seq_len: int | None = field(default=None)
@@ -386,7 +333,6 @@ class DataArguments:
     )
 
     duplicate_n_gram_bins: int = field(default=4)
-    position_retrieval_varlen: list[int] = field(default_factory=lambda: [2, 3, 4, 5, 10])
 
 
 @dataclass
@@ -421,7 +367,7 @@ class TrainArgs(transformers.TrainingArguments):
     early_stopping_patience: int = field(default=1000)
     early_stopping_threshold: float = field(default=0.95)
     metric_for_best_model: str = field(default="eval_accuracy")
-    run_name: str = field(default="copy-transformer160m")
+    run_name: str = field(default="transformer160m")
     project_name: str = field(default="retrievit")
     # Use `none` if using a custom wandb callback
     # The reason is that if we use `all` the default behavior is to add all available callbacks
@@ -481,9 +427,6 @@ def build_model(
     elif model_args.model_class == "transformer_nope":
         model = TransformerNoPE(config=config, tokenizer=tokenizer)
 
-    elif model_args.model_class == "hybrid_par_corrector":
-        model = HybridParCorrector(config=config, tokenizer=tokenizer)
-
     else:
         raise ValueError(f"Model class {model_args.model_class} is not supported.")
 
@@ -528,7 +471,6 @@ def train() -> None:
         tokenizer=tokenizer,
         needs_attention_mask=model_args.model_class != "mamba",
         is_prefix=data_args.is_prefix,
-        position_retrieval_varlen=data_args.position_retrieval_varlen,
     )
 
     eval_dataset = RetrievetSamplingDataset(
@@ -541,7 +483,6 @@ def train() -> None:
         tokenizer=tokenizer,
         needs_attention_mask=model_args.model_class != "mamba",
         is_prefix=data_args.is_prefix,
-        position_retrieval_varlen=data_args.position_retrieval_varlen,
     )
 
     collate_fn = Collate(padding=DatasetPadding(), padding_side="right")

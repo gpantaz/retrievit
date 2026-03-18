@@ -11,10 +11,7 @@ from transformers.models.mamba.modeling_mamba import MambaCausalLMOutput
 class Task(Enum):
     """Task for the an instance."""
 
-    copy = "copy"
     n_gram_retrieval = "n_gram_retrieval"
-    token_retrieval = "token_retrieval"  # noqa: S105
-    selective_copy = "selective_copy"
     position_retrieval = "position_retrieval"
 
     @classmethod
@@ -77,7 +74,6 @@ class DatasetPadding:
 class SpecialTokens:
     """Special tokens used by the tokenizer."""
 
-    copy_token: str = "<copy>"  # noqa: S105
     out_token: str = "<out>"  # noqa: S105
     query_token: str = "<query>"  # noqa: S105
     white_token: str = "<white>"  # noqa: S105
